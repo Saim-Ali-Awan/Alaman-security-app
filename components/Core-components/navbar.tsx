@@ -71,11 +71,13 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <div className="flex items-center gap-2">
+        {/* Right side: tight spacing on phones, normal from sm up */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <ThemeToggle />
           {signedIn === null ? null : signedIn ? (
             <>
-              <Link href="/dashboard" className="hidden sm:flex">
+              {/* Registry — visible on ALL screen sizes when signed in */}
+              <Link href="/dashboard" className="flex">
                 <Button variant="outline" size="sm" className="rounded-full">
                   Registry
                 </Button>

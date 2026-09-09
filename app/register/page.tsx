@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 import { createClient } from "@/lib/supabase/client";
 import { PHONE_PATTERN } from "@/lib/supabase/constants";
 import {
@@ -21,17 +23,45 @@ import {
 } from "@/lib/supabase/postgres-errors";
 
 export default function RegisterPointPage() {
+  const router = useRouter();
   const [name, setName] = useState<string>("");
   const [personName, setPersonName] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [redirecting, setRedirecting] = useState<boolean>(false);
+  const [progress, setProgress] = useState<number>(0);
+
+  useEffect(() => {
+    if (!redirecting) {
+      return;
+    }
+
+    setProgress(12);
+
+    const interval = window.setInterval(() => {
+      setProgress((current: number): number =>
+        current >= 88 ? current : current + 8
+      );
+    }, 80);
+
+    const timeout = window.setTimeout(() => {
+      setProgress(100);
+      router.push("/dashboard");
+      router.refresh();
+    }, 900);
+
+    return () => {
+      window.clearInterval(interval);
+      window.clearTimeout(timeout);
+    };
+  }, [redirecting, router]);
 
   const handleSubmit = async (
     event: FormEvent<HTMLFormElement>
   ): Promise<void> => {
     event.preventDefault();
 
-    if (submitting) {
+    if (submitting || redirecting) {
       return;
     }
 
@@ -89,12 +119,10 @@ export default function RegisterPointPage() {
     }
 
     toast.success("Point registered", {
-      description: `${trimmedName} was added to the registry.`,
+      description: `${trimmedName} was added to the registry. Opening your dashboard…`,
     });
 
-    setName("");
-    setPersonName("");
-    setPhone("");
+    setRedirecting(true);
   };
 
   return (
@@ -107,59 +135,76 @@ export default function RegisterPointPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit}>
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="point-name">Point Name</FieldLabel>
-                <Input
-                  id="point-name"
-                  type="text"
-                  autoComplete="off"
-                  placeholder="e.g. North Gate"
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  className="rounded-full"
-                  required
-                />
-              </Field>
+          {redirecting ? (
+            <div className="flex min-h-72 flex-col items-center justify-center gap-6 text-center">
+              <div className="flex flex-col gap-1.5">
+                <h2 className="text-xl font-semibold">
+                  Redirecting to the Points Registry…
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {name.trim()} was registered. Opening your dashboard now.
+                </p>
+              </div>
+              <Progress value={progress} className="w-full" />
+              <p className="text-xs text-muted-foreground">
+                {progress >= 100 ? "Almost there…" : "Please wait…"}
+              </p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <FieldGroup>
+                <Field>
+                  <FieldLabel htmlFor="point-name">Point Name</FieldLabel>
+                  <Input
+                    id="point-name"
+                    type="text"
+                    autoComplete="off"
+                    placeholder="e.g. North Gate"
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                    className="rounded-full"
+                    required
+                  />
+                </Field>
 
-              <Field>
-                <FieldLabel htmlFor="person-name">Person Name</FieldLabel>
-                <Input
-                  id="person-name"
-                  type="text"
-                  autoComplete="off"
-                  placeholder="e.g. Ali Raza"
-                  value={personName}
-                  onChange={(event) => setPersonName(event.target.value)}
-                  className="rounded-full"
-                  required
-                />
-              </Field>
+                <Field>
+                  <FieldLabel htmlFor="person-name">Person Name</FieldLabel>
+                  <Input
+                    id="person-name"
+                    type="text"
+                    autoComplete="off"
+                    placeholder="e.g. Ali Raza"
+                    value={personName}
+                    onChange={(event) => setPersonName(event.target.value)}
+                    className="rounded-full"
+                    required
+                  />
+                </Field>
 
-              <Field>
-                <FieldLabel htmlFor="phone">Phone Number</FieldLabel>
-                <Input
-                  id="phone"
-                  type="tel"
-                  autoComplete="off"
-                  placeholder="e.g. +92 300 1234567"
-                  value={phone}
-                  onChange={(event) => setPhone(event.target.value)}
-                  className="rounded-full"
-                  required
-                />
-              </Field>
+                <Field>
+                  <FieldLabel htmlFor="phone">Phone Number</FieldLabel>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    autoComplete="off"
+                    placeholder="e.g. +92 300 1234567"
+                    value={phone}
+                    onChange={(event) => setPhone(event.target.value)}
+                    className="rounded-full"
+                    required
+                  />
+                </Field>
 
-              <Button
-                type="submit"
-                className="rounded-full"
-                disabled={submitting}
-              >
-                {submitting ? "Registering..." : "Register Point"}
-              </Button>
-            </FieldGroup>
-          </form>
+                <Button
+                  type="submit"
+                  className="rounded-full"
+                  disabled={submitting}
+                >
+                  {submitting ? "Registering..." : "Register Point"}
+                </Button>
+              </FieldGroup>
+            </form>
+          )}
         </CardContent>
       </Card>
     </div>
