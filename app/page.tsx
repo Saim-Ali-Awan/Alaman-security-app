@@ -128,15 +128,6 @@ export default function HomePage() {
       Incharge Login
     </Button>
   </Link>
-  <Link href="/register" className="flex w-full sm:w-auto">
-    <Button
-      variant="outline"
-      size="lg"
-      className="hero-cta w-full rounded-full sm:w-auto"
-    >
-      Register a Point
-    </Button>
-  </Link>
 </div>
       </section>
 
@@ -168,12 +159,6 @@ export default function HomePage() {
               className="rounded-full text-primary hover:underline"
             >
               Incharge Login
-            </Link>
-            <Link
-              href="/register"
-              className="rounded-full text-primary hover:underline"
-            >
-              Register a Point
             </Link>
           </div>
         </div>
