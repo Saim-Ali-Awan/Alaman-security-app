@@ -83,7 +83,7 @@ export default function Navbar() {
                 </Button>
               </Link>
               <Button
-                variant="outline"
+                variant="default"
                 size="sm"
                 className="rounded-full"
                 onClick={(): void => setSignOutOpen(true)}
