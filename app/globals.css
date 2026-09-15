@@ -171,3 +171,39 @@
     @apply bg-background text-foreground;
   }
 }
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Collapse both snapshots onto the same z-index so the new theme
+   sweeps over the old one from the circle. */
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+}
+
+/* The growing circle itself. --theme-circle-x / -y are set from
+   JavaScript right before the transition starts. */
+::view-transition-image-pair(root) {
+  isolation: auto;
+}
+
+@keyframes theme-circle-reveal {
+  from {
+    clip-path: circle(0px at var(--theme-circle-x) var(--theme-circle-y));
+  }
+  to {
+    clip-path: circle(
+      calc(100vw + 100vh) at var(--theme-circle-x) var(--theme-circle-y)
+    );
+  }
+}
+
+::view-transition-new(root) {
+  animation: theme-circle-reveal 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}

@@ -314,13 +314,6 @@ export default function DashboardPage() {
               Register Point
             </Button>
           </Link>
-          <Button
-            variant="outline"
-            className="rounded-full"
-            onClick={(): void => setSignOutOpen(true)}
-          >
-            Sign Out
-          </Button>
         </div>
       </div>
 

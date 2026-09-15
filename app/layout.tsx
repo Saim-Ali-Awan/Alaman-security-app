@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import Navbar from "@/components/Core-components/navbar";
 import RouteProgressBar from "@/components/route-progress-bar";
 import ThemeProvider from "@/components/theme-provider";
+import { HapticsProvider } from "@/components/haptics-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -31,11 +32,14 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
+          enableColorScheme
         >
-          <RouteProgressBar />
-          <Navbar />
-          <main className="flex flex-1 flex-col">{children}</main>
-          <Toaster richColors closeButton />
+          <HapticsProvider>
+            <RouteProgressBar />
+            <Navbar />
+            <main className="flex flex-1 flex-col">{children}</main>
+            <Toaster richColors closeButton />
+          </HapticsProvider>
         </ThemeProvider>
       </body>
     </html>
