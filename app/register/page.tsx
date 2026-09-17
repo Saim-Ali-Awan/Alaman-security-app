@@ -87,42 +87,62 @@ export default function RegisterPointPage() {
 
     setSubmitting(true);
 
-    const supabase = createClient();
-    const { error } = await supabase.from("points").insert({
-      name: trimmedName,
-      person_name: trimmedPersonName,
-      phone: trimmedPhone,
-    });
+    try {
+      const supabase = createClient();
 
-    setSubmitting(false);
+      const { error } = await supabase.from("points").insert({
+        name: trimmedName,
+        person_name: trimmedPersonName,
+        phone: trimmedPhone,
+      });
 
-    if (error) {
-      if (isDuplicateError(error)) {
-        toast.error("Duplicate point", {
-          description: "A point with this name already exists.",
+      if (error) {
+        if (isDuplicateError(error)) {
+          toast.error("Duplicate point", {
+            description: `"${trimmedName}" is already registered — point names must be unique, even with different capitalization. Try a different name.`,
+          });
+          return;
+        }
+
+        if (isRowLevelSecurityError(error)) {
+          toast.error("Not authorized", {
+            description:
+              "Your session could not write to the database. Sign out and sign back in, then try again. If it persists, the RLS policy needs repairing (see the policy check SQL).",
+          });
+          return;
+        }
+
+        toast.error("Registration failed", {
+          description: errorMessage(
+            error.message,
+            "Something went wrong while registering this point."
+          ),
         });
         return;
       }
 
-      if (isRowLevelSecurityError(error)) {
-        toast.error("Not authorized", { description: "Not authorized." });
-        return;
-      }
+      toast.success("Point registered", {
+        description: `${trimmedName} was added to the registry. Opening your dashboard…`,
+      });
 
-      toast.error("Registration failed", {
+      setRedirecting(true);
+    } catch (thrownError: unknown) {
+      const message: string =
+        thrownError instanceof Error
+          ? thrownError.message
+          : String(thrownError);
+
+      toast.error("Registration failed unexpectedly", {
         description: errorMessage(
-          error.message,
+          message,
           "Something went wrong while registering this point."
         ),
       });
-      return;
+    } finally {
+      // The button can NEVER get stuck on "Registering…" — even if
+      // something throws, this always runs.
+      setSubmitting(false);
     }
-
-    toast.success("Point registered", {
-      description: `${trimmedName} was added to the registry. Opening your dashboard…`,
-    });
-
-    setRedirecting(true);
   };
 
   return (

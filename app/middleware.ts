@@ -2,8 +2,6 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "@/components/types/database";
 
-const PROTECTED_PREFIXES: string[] = ["/dashboard", "/register"];
-
 export async function middleware(request: NextRequest): Promise<NextResponse> {
   let response = NextResponse.next({ request });
 
@@ -28,24 +26,12 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     }
   );
 
-  // NEVER use getSession() here — getUser() verifies the JWT with the auth server
-  // and refreshes tokens through the cookie adapter above.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const { pathname } = request.nextUrl;
-  const isProtected: boolean = PROTECTED_PREFIXES.some(
-    (prefix: string): boolean =>
-      pathname === prefix || pathname.startsWith(`${prefix}/`)
-  );
-
-  if (!user && isProtected) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/login";
-    redirectUrl.search = "";
-    return NextResponse.redirect(redirectUrl);
-  }
+  // Verifies the JWT with the auth server and refreshes expired tokens
+  // through the cookie adapter. We intentionally do NOT redirect here:
+  // the protected pages render the incharge-only "Restricted Access"
+  // page themselves via a server-side getUser() check in their layouts,
+  // so the protected content is never sent to the browser at all.
+  await supabase.auth.getUser();
 
   return response;
 }

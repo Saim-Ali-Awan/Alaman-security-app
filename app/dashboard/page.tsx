@@ -305,7 +305,15 @@ export default function DashboardPage() {
           </h1>
           <p className="text-sm text-muted-foreground">Incharge · full access</p>
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+             <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap">
+          <Link href="/dashboard/analytics" className="flex">
+            <Button
+              variant="outline"
+              className="w-full rounded-full sm:w-auto"
+            >
+              Analytics
+            </Button>
+          </Link>
           <Link href="/register" className="flex">
             <Button
               variant="outline"
@@ -314,6 +322,13 @@ export default function DashboardPage() {
               Register Point
             </Button>
           </Link>
+          <Button
+            variant="outline"
+            className="rounded-full"
+            onClick={(): void => setSignOutOpen(true)}
+          >
+            Sign Out
+          </Button>
         </div>
       </div>
 
