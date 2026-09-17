@@ -3,6 +3,10 @@ import type { User } from "@supabase/supabase-js";
 import RestrictedAccess from "@/components/restricted-access";
 import { createClient } from "@/lib/supabase/server";
 
+// THIS is the fix — tells Next.js: "always render at request time,
+// never try to statically prerender this route (it uses cookies)."
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Points Registry",
 };
@@ -19,8 +23,6 @@ export default async function DashboardLayout({
     const { data } = await supabase.auth.getUser();
     user = data.user;
   } catch (error: unknown) {
-    // Never crash the route — log it (shows up in Vercel Runtime Logs)
-    // and fail closed to the restricted page.
     console.error("Dashboard auth check failed:", error);
   }
 

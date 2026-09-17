@@ -3,6 +3,9 @@ import type { User } from "@supabase/supabase-js";
 import RestrictedAccess from "@/components/restricted-access";
 import { createClient } from "@/lib/supabase/server";
 
+// Same fix — always render dynamically (uses cookies).
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Register a Point",
 };
