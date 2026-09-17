@@ -308,7 +308,7 @@ export default function DashboardPage() {
              <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap">
           <Link href="/dashboard/analytics" className="flex">
             <Button
-              variant="outline"
+              variant="default"
               className="w-full rounded-full sm:w-auto"
             >
               Analytics
@@ -323,7 +323,7 @@ export default function DashboardPage() {
             </Button>
           </Link>
           <Button
-            variant="outline"
+            variant="secondary"
             className="rounded-full"
             onClick={(): void => setSignOutOpen(true)}
           >

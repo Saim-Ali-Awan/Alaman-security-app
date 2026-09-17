@@ -452,7 +452,7 @@ export default function AnalyticsView() {
         </div>
         <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
           <Button
-            variant="outline"
+            variant="default"
             className="rounded-full"
             onClick={(): void => {
               void load();
