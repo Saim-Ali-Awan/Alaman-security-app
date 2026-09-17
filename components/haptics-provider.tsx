@@ -82,3 +82,4 @@ export function useHaptics(): HapticsContextValue {
 
   return context;
 }
+export default HapticsProvider;

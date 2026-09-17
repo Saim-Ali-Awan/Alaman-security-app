@@ -439,14 +439,14 @@ export default function AnalyticsView() {
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span className="relative flex h-2.5 w-2.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60" />
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary" />
+
             </span>
             <span>
               {lastUpdatedAt === 0
                 ? "connecting…"
                 : secondsAgo < 3
-                  ? "Live · updated just now"
-                  : `Live · updated ${secondsAgo}s ago`}
+                  ? "updated just now"
+                  : `updated ${secondsAgo}s ago`}
             </span>
           </div>
         </div>
@@ -590,7 +590,7 @@ export default function AnalyticsView() {
               <CardHeader>
                 <CardTitle>Attendance · {thisMonth.name}</CardTitle>
                 <CardDescription>
-                  Records marked each day of {thisMonth.name} · live
+                  Records marked each day of {thisMonth.name}
                 </CardDescription>
               </CardHeader>
               <CardContent>
