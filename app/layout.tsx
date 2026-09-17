@@ -32,14 +32,14 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
-          enableColorScheme
         >
-          <HapticsProvider>
-            <RouteProgressBar />
-            <Navbar />
-            <main className="flex flex-1 flex-col">{children}</main>
-            <Toaster richColors closeButton />
-          </HapticsProvider>
+          {/* TEMPORARY — comment these out to isolate the crash: */}
+          {/* <RouteProgressBar /> */}
+          {/* <HapticsProvider>{...}</HapticsProvider> */}
+          
+          <Navbar />
+          <main className="flex flex-1 flex-col">{children}</main>
+          <Toaster richColors closeButton />
         </ThemeProvider>
       </body>
     </html>
