@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { User } from "@supabase/supabase-js";
 import RestrictedAccess from "@/components/restricted-access";
 import { createClient } from "@/lib/supabase/server";
 
@@ -11,14 +12,18 @@ export default async function DashboardLayout({
 }: {
   children: ReactNode;
 }) {
-  const supabase = await createClient();
+  let user: User | null = null;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+  } catch (error: unknown) {
+    // Never crash the route — log it (shows up in Vercel Runtime Logs)
+    // and fail closed to the restricted page.
+    console.error("Dashboard auth check failed:", error);
+  }
 
-  // Not signed in (or token invalid): never render the registry —
-  // show the incharge-only page with a Login button instead.
   if (user === null) {
     return <RestrictedAccess />;
   }
